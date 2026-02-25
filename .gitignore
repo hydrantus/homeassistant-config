@@ -1,0 +1,25 @@
+# 1. Ignore everything in the directory
+*
+
+# 2. Whitelist the files and folders you want to track
+!*.yaml
+!.gitignore
+!*.md
+!custom_components/
+!themes/
+!www/
+!python_scripts/
+
+# 3. SAFETY NET: Explicitly re-ignore secrets and personal data
+# (Even if they end in .yaml, this overrides the whitelist above)
+secrets.yaml
+ip_bans.yaml
+known_devices.yaml
+home-assistant_v2.db
+home-assistant_v2.db-*
+home-assistant.log
+.storage/
+.cloud/
+.google.token
+deps/
+__pycache__/

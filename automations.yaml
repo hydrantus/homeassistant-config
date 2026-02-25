@@ -1,0 +1,646 @@
+- id: '1766004343074'
+  alias: bedroom - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 8629ba3c2b3e91f78318def35ee0536b
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  - domain: mqtt
+    device_id: b63eb75b0b9903f715223abe60314e17
+    type: action
+    subtype: hold
+    trigger: device
+  - domain: mqtt
+    device_id: c9abcced2f69709de58c6514287dfee5
+    type: action
+    subtype: hold
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.bedroom_tradfri_bulbs_group
+    data: {}
+  mode: single
+- id: '1766010758777'
+  alias: gallery - light - motion logic
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.gallery_motion_group
+      light_target:
+        entity_id:
+        - light.gallery_tradfri_light_group
+      no_motion_wait: 120
+- id: '1766014208563'
+  alias: gallery - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 41d33e1f0eba87d6a67d5a7e0a6dcd52
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  - device_id: e59a10fb8d89b9c7b19dc9d44ebb6fc9
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  - device_id: 12ec9279cb730aa50f2545177fe606e9
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.gallery_tradfri_light_group
+    data: {}
+  mode: single
+- id: '1766016065311'
+  alias: kitchen - light - auto off after 10m
+  description: ''
+  triggers:
+  - entity_id: switch.kitchen_shelly_switch_kitchen_lights
+    to: 'on'
+    trigger: state
+  - trigger: state
+    entity_id: binary_sensor.kitchen_sonoff_motion_sensor_occupancy
+    to: 'off'
+  conditions:
+  - condition: state
+    entity_id: switch.kitchen_shelly_switch_kitchen_lights
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.kitchen_sonoff_motion_sensor_occupancy
+    state: 'off'
+  actions:
+  - wait_for_trigger:
+    - entity_id:
+      - binary_sensor.kitchen_sonoff_motion_sensor_occupancy
+      to:
+      - 'on'
+      trigger: state
+    timeout: 00:10:00
+    continue_on_timeout: true
+  - if:
+    - condition: state
+      entity_id: binary_sensor.kitchen_sonoff_motion_sensor_occupancy
+      state:
+      - 'off'
+    then:
+    - type: turn_off
+      device_id: 5528980bdd500a3db02ff7ab0a9dc2f5
+      entity_id: d42a63418c6e27abb73c066d013db095
+      domain: switch
+  mode: restart
+- id: '1766094618347'
+  alias: 'bedroom - led - toggle on switch '
+  description: ''
+  triggers:
+  - device_id: 8629ba3c2b3e91f78318def35ee0536b
+    domain: shelly
+    type: single_push
+    subtype: button2
+    trigger: device
+  - domain: mqtt
+    device_id: b63eb75b0b9903f715223abe60314e17
+    type: action
+    subtype: single
+    trigger: device
+  - domain: mqtt
+    device_id: c9abcced2f69709de58c6514287dfee5
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    target:
+      entity_id: light.bedroom_gledopto_led_main
+  mode: single
+- id: '1766134804455'
+  alias: kitchen - light - toggle on remote
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: f1211d5965f655047698f7e634425e00
+    type: action
+    subtype: 1_single
+    metadata: {}
+    trigger: device
+  conditions: []
+  actions:
+  - action: switch.toggle
+    metadata: {}
+    target:
+      entity_id: switch.kitchen_shelly_switch_kitchen_lights
+    data: {}
+  mode: single
+- id: '1766163383238'
+  alias: kids - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 8fbaaa6b01aa833f61dd836fe632a108
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  - domain: mqtt
+    device_id: 01ecf336054ee199e3cc191bba3f7805
+    type: action
+    subtype: hold
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.kids_tradfri_light_group
+  mode: single
+- id: '1766164624278'
+  alias: bathroom - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: f46946e9881285d049747e36968bb42f
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.bathroom_tradfri_light_group
+  mode: single
+- id: '1766872642621'
+  alias: bathroom - light - full power on long push
+  description: Sets bathroom lights to 100% on long press
+  triggers:
+  - device_id: f46946e9881285d049747e36968bb42f
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      entity_id: switch.adaptive_lighting_bathroom
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.bathroom_tradfri_light_group
+    data:
+      transition: 0.5
+      brightness_pct: 100
+  mode: restart
+- id: '1766873076867'
+  alias: kids - light - full power on long press
+  description: Sets kids room lights to 100% on long press
+  triggers:
+  - device_id: 8fbaaa6b01aa833f61dd836fe632a108
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      entity_id: switch.adaptive_lighting_kids
+  - action: light.turn_on
+    metadata: {}
+    data:
+      transition: 0.5
+      brightness_pct: 100
+    target:
+      entity_id: light.kids_tradfri_light_group
+  mode: restart
+- id: '1767565067124'
+  alias: all - sleep mode from 23:00 to 7:00
+  description: Turns sleep mode for all rooms based on time
+  triggers:
+  - at: '23:00:00'
+    id: night_start
+    trigger: time
+  - at: 07:00:00
+    id: night_end
+    trigger: time
+  actions:
+  - target:
+      entity_id:
+      - switch.adaptive_lighting_sleep_mode_kids
+      - switch.adaptive_lighting_sleep_mode_bathroom
+      - switch.adaptive_lighting_sleep_mode_bedroom
+      - switch.adaptive_lighting_sleep_mode_gallery
+      - switch.adaptive_lighting_sleep_mode_garage
+    action: switch.turn_{{ 'on' if trigger.id == 'night_start' else 'off' }}
+  mode: restart
+- id: '1767622948479'
+  alias: laundry - washing machine has finished
+  description: ''
+  use_blueprint:
+    path: sbyx/notify-or-do-something-when-an-appliance-like-a-dishwasher-or-washing-machine-finishes.yaml
+    input:
+      power_sensor: sensor.loundry_athom_smartplug_washing_machine_power
+      pre_actions: []
+      actions:
+      - action: notify.mobile_app_andrej_pixel_9_pro
+        metadata: {}
+        data:
+          title: "Laundry Done! \U0001F9FA"
+          message: Washing machine finished.
+          data:
+            ttl: 0
+            priority: high
+            tag: laundry-notification
+            actions:
+            - action: SNOOZE_LAUNDRY
+              title: Snooze (30m)
+      - action: notify.mobile_app_pide_pixel_9_pro
+        metadata: {}
+        data:
+          title: "Laundry Done! \U0001F9FA"
+          message: Washing machine finished.
+          data:
+            ttl: 0
+            priority: high
+            tag: laundry-notification
+            actions:
+            - action: SNOOZE_LAUNDRY
+              title: Snooze (30m)
+      finishing_threshold: 1
+      finishing_hysteresis: 1
+- id: '1767630765487'
+  alias: bedroom - light - full power on long press
+  description: Sets bedroom lights to 100% on long press
+  triggers:
+  - device_id: 8629ba3c2b3e91f78318def35ee0536b
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      entity_id: switch.adaptive_lighting_bedroom
+  - action: light.turn_on
+    metadata: {}
+    data:
+      transition: 0.5
+      brightness_pct: 100
+    target:
+      entity_id: light.bedroom_tradfri_bulbs_group
+  mode: restart
+- id: '1767630976466'
+  alias: gallery - light - full power on long push
+  description: Sets gallery lights to 100% on long press
+  triggers:
+  - device_id: 41d33e1f0eba87d6a67d5a7e0a6dcd52
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  - device_id: e59a10fb8d89b9c7b19dc9d44ebb6fc9
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  - device_id: 12ec9279cb730aa50f2545177fe606e9
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      entity_id: switch.adaptive_lighting_gallery
+  - action: light.turn_on
+    metadata: {}
+    data:
+      transition: 0.5
+      brightness_pct: 100
+    target:
+      entity_id:
+      - light.gallery_tradfri_light_group
+      - light.garage_tradfri_light_group
+  mode: restart
+- id: '1767640334690'
+  alias: kids - red light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 8fbaaa6b01aa833f61dd836fe632a108
+    domain: shelly
+    type: double_push
+    subtype: button1
+    trigger: device
+  - domain: mqtt
+    device_id: 01ecf336054ee199e3cc191bba3f7805
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - action: switch.toggle
+    metadata: {}
+    target:
+      entity_id: switch.kids_athom_smartplug_light_smart_plug_v2
+    data: {}
+  mode: single
+- id: '1768569097885'
+  alias: garage - light - motion logic
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.gallery_loginovo_presence_sensor_stairs_gym_presence
+      light_target:
+        entity_id: light.garage_tradfri_light_group
+- id: '1768572032815'
+  alias: Low Battery Notifications & Actions
+  description: ''
+  use_blueprint:
+    path: Blackshome/low-battery-notifications-and-actions.yaml
+    input:
+      include_time: time_enabled
+      time: '13:53:00'
+      battery_sensor_report_fields:
+      - friendly_name
+      exclude_hidden_entities: hidden_enabled
+      include_easy_notify: enable_easy_notify
+      notify_device:
+      - 47946cec3de1894411a239c8b6710b0a
+      - d0d59188635c5216dfef37a67977bafc
+      notify_okay_message: "\U0001F50B All batteries are okay"
+      notify_title: Battery Check
+      persistent_notify_title: Battery Check
+- id: '1769883779105'
+  alias: office - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 017e797a0885658dd509965445e44524
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.office_aurelle_light
+    data: {}
+  mode: single
+- id: '1769979646376'
+  alias: entrance - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 64b600b39dfe34a441459c24f51f93fa
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  - device_id: 9d0c56ec145efa25c11f6912bb588d4d
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.entrance_tradfri_light_group
+    data: {}
+  mode: single
+- id: '1770214001595'
+  alias: laundry - light - motion logic
+  description: Turns on light on motion, waits for clear, turns off. Can be disabled
+    by switch logic.
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.laundry_sonoff_motion_sensor_occupancy
+      light_target:
+        entity_id: light.laundry_shelly_switch_laundry_lights
+  mode: restart
+  triggers:
+  - entity_id: binary_sensor.laundry_sonoff_motion_sensor_occupancy
+    to: 'on'
+    trigger: state
+  actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.laundry_shelly_switch_laundry_lights
+  - wait_for_trigger:
+    - entity_id: binary_sensor.laundry_sonoff_motion_sensor_occupancy
+      to: 'off'
+      for: 00:02:00
+      trigger: state
+  - action: light.turn_off
+    target:
+      entity_id: light.laundry_shelly_switch_laundry_lights
+- id: '1770634447786'
+  alias: bathroom - light - auto off after 15m
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bathroom_sonoff_motion_sensor_occupancy
+    to:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.bathroom_tradfri_light_group
+    data: {}
+  mode: single
+- id: '1770760597585'
+  alias: living - vacuum - return to dock
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: f1211d5965f655047698f7e634425e00
+    type: action
+    subtype: 3_double
+    trigger: device
+  conditions: []
+  actions:
+  - action: vacuum.return_to_base
+    target:
+      entity_id: vacuum.robot_sosak
+    data: {}
+  mode: single
+- id: '1770760676868'
+  alias: living - vacuum - clean kitchen
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: f1211d5965f655047698f7e634425e00
+    type: action
+    subtype: 3_single
+    trigger: device
+  conditions: []
+  actions:
+  - action: script.clean_kitchen_floor
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1770760700000'
+  alias: bathroom - shower light - follow main lights
+  description: Syncs shower light with main bathroom lights
+  triggers:
+  - trigger: state
+    entity_id: light.bathroom_tradfri_light_group
+    to: 'on'
+    id: turn_on
+  - trigger: state
+    entity_id: light.bathroom_tradfri_light_group
+    to: 'off'
+    id: turn_off
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: turn_on
+      - condition: state
+        entity_id: switch.adaptive_lighting_sleep_mode_bathroom
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.bathroom_shelly_hidden_switch_shower
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: turn_off
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.bathroom_shelly_hidden_switch_shower
+        data: {}
+  mode: single
+- id: '1770760800000'
+  alias: office - light - full power on long press
+  description: Sets office lights to 100% on long press
+  triggers:
+  - device_id: 017e797a0885658dd509965445e44524
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      entity_id: switch.adaptive_lighting_office
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 100
+      transition: 0.5
+    target:
+      entity_id: light.office_aurelle_light
+  mode: restart
+- id: '1770760900000'
+  alias: laundry - light - toggle on switch
+  description: Smart switch logic with debounce and cool-off
+  mode: restart
+  triggers:
+  - device_id: YOUR_SHELLY_DEVICE_ID
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.laundry_shelly_switch_laundry_lights
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.laundry_shelly_switch_laundry_lights
+      - action: automation.turn_on
+        target:
+          entity_id: automation.laundry_light_motion_logic
+    - conditions:
+      - condition: state
+        entity_id: light.laundry_shelly_switch_laundry_lights
+        state: 'on'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ (now() - states.light.laundry_shelly_switch_laundry_lights.last_changed).total_seconds()
+            > 2 }}'
+        then:
+        - action: light.turn_off
+          target:
+            entity_id: light.laundry_shelly_switch_laundry_lights
+        - action: automation.turn_off
+          target:
+            entity_id: automation.laundry_light_motion_logic
+        - delay: 00:00:30
+        - action: automation.turn_on
+          target:
+            entity_id: automation.laundry_light_motion_logic
+- id: '1771315791303'
+  alias: laundry - light - disable motion logic temporarily after manual switch off
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.laundry_shelly_switch_laundry_lights
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions: []
+  actions:
+  - action: automation.turn_off
+    metadata: {}
+    target:
+      entity_id: automation.laundry_light_motion_logic
+    data:
+      stop_actions: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - action: automation.turn_on
+    metadata: {}
+    target:
+      entity_id: automation.laundry_light_motion_logic
+    data: {}
+  mode: single

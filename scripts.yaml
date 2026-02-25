@@ -1,0 +1,90 @@
+reset_ikea_bulbs:
+  alias: Reset IKEA bulbs (parametrized)
+  description: Resets/re-pairs IKEA bulbs via Shelly switch power cycle. Pass switch_entity in service call.
+  fields:
+    switch_entity:
+      description: Shelly switch entity that controls the IKEA bulbs
+      example: switch.bathroom_shelly_switch_light_wall
+      default: switch.bathroom_shelly_switch_light_wall
+  sequence:
+    - repeat:
+        count: 5
+        sequence:
+          - action: switch.turn_on
+            data: {}
+          - service: switch.turn_on
+            target:
+              entity_id: "{{ switch_entity }}"
+          - delay: "00:00:00.500"
+          - action: switch.turn_off
+          - service: switch.turn_off
+            target:
+              entity_id: "{{ switch_entity }}"
+          - delay: "00:00:01.000"
+    - action: switch.turn_on
+    - service: switch.turn_on
+      target:
+        entity_id: "{{ switch_entity }}"
+      data: {}
+  mode: single
+bathroom_reset_ikea_bulbs:
+  alias: Reset bathroom IKEA bulbs
+  sequence:
+    - service: script.reset_ikea_bulbs
+      data:
+        switch_entity: switch.bathroom_shelly_switch_light_wall
+  mode: single
+kids_reset_ikea_bulbs:
+  alias: Kids reset IKEA bulbs
+  sequence:
+    - service: script.reset_ikea_bulbs
+      data:
+        switch_entity: switch.kids_shelly_switch_main
+  mode: single
+wc_reset_ikea_bulbs:
+  alias: Reset WC IKEA bulbs
+  sequence:
+    - service: script.reset_ikea_bulbs
+      data:
+        switch_entity: switch.wc_shelly_switch_light_ceiling
+  mode: single
+zigbee_sequential_update:
+  alias: Zigbee Sequential Update
+  mode: single
+  icon: mdi:update
+  sequence:
+    - variables:
+        updates_available:
+          "{{ states.update \n  | selectattr('state', 'eq', 'on') \n
+          \ | selectattr('attributes.device_class', 'defined')\n  | selectattr('attributes.device_class',
+          'eq', 'firmware')\n  | map(attribute='entity_id') \n  | list }}\n"
+        updates_available: >
+          {{ states.update
+            | selectattr('state', 'eq', 'on')
+            | selectattr('attributes.device_class', 'eq', 'firmware')
+            | map(attribute='entity_id') | list }}
+    - repeat:
+        for_each: "{{ updates_available }}"
+        sequence:
+          - service: update.install
+            data:
+              entity_id: "{{ repeat.item }}"
+          - wait_template: "{{ is_state(repeat.item, 'off') }}"
+            timeout: 01:00:00
+            continue_on_timeout: true
+          - delay:
+              seconds: 30
+clean_kitchen_floor:
+  sequence:
+    - action: vacuum.send_command
+      metadata: {}
+    - service: vacuum.send_command
+      target:
+        entity_id: vacuum.robot_sosak
+      data:
+        command: spot_area
+        params:
+          rooms: "1"
+          count: 1
+  alias: vacuum - clean kitchen
+  description: ""
