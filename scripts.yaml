@@ -11,22 +11,17 @@ reset_ikea_bulbs:
     - repeat:
         count: 5
         sequence:
-          - action: switch.turn_on
-            data: {}
           - service: switch.turn_on
             target:
               entity_id: "{{ switch_entity }}"
           - delay: "00:00:00.500"
-          - action: switch.turn_off
           - service: switch.turn_off
             target:
               entity_id: "{{ switch_entity }}"
           - delay: "00:00:01.000"
-    - action: switch.turn_on
     - service: switch.turn_on
       target:
         entity_id: "{{ switch_entity }}"
-      data: {}
   mode: single
 bathroom_reset_ikea_bulbs:
   alias: Reset bathroom IKEA bulbs
