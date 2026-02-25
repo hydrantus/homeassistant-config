@@ -644,3 +644,20 @@
       entity_id: automation.laundry_light_motion_logic
     data: {}
   mode: single
+- id: '1772056319137'
+  alias: wc - light - toggle on switch
+  description: ''
+  triggers:
+  - device_id: 2391a34d81a948d75d17d1ccc2db6554
+    domain: shelly
+    type: single_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.wc_tradfri_light_group
+    data: {}
+  mode: single
