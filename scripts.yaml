@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://gist.githubusercontent.com/sargunv/c2ca41a08391cd06feaad97aece309e4/raw/empty-json-schema.json
 reset_ikea_bulbs:
   alias: Reset IKEA bulbs (parametrized)
   description: Resets/re-pairs IKEA bulbs via Shelly switch power cycle. Pass switch_entity in service call.
@@ -54,10 +55,6 @@ zigbee_sequential_update:
   icon: mdi:update
   sequence:
     - variables:
-        updates_available:
-          "{{ states.update \n  | selectattr('state', 'eq', 'on') \n
-          \ | selectattr('attributes.device_class', 'defined')\n  | selectattr('attributes.device_class',
-          'eq', 'firmware')\n  | map(attribute='entity_id') \n  | list }}\n"
         updates_available: >
           {{ states.update
             | selectattr('state', 'eq', 'on')
@@ -76,8 +73,6 @@ zigbee_sequential_update:
               seconds: 30
 clean_kitchen_floor:
   sequence:
-    - action: vacuum.send_command
-      metadata: {}
     - service: vacuum.send_command
       target:
         entity_id: vacuum.robot_sosak
