@@ -377,17 +377,17 @@
       light_target:
         entity_id: light.garage_tradfri_light_group
 - id: '1768572032815'
-  alias: Low Battery Notifications & Actions
+  alias: all - low battery notification
   description: ''
   use_blueprint:
     path: Blackshome/low-battery-notifications-and-actions.yaml
     input:
       include_time: time_enabled
-      time: '13:53:00'
+      time: '11:00:00'
       battery_sensor_report_fields:
       - friendly_name
       exclude_hidden_entities: hidden_enabled
-      include_easy_notify: enable_easy_notify
+      include_easy_notify: enable_easy_okay_notify
       notify_device:
       - 47946cec3de1894411a239c8b6710b0a
       - d0d59188635c5216dfef37a67977bafc
@@ -642,3 +642,26 @@
       transition: 0.5
       brightness_pct: 100
   mode: restart
+- id: '1772056319139'
+  alias: garage - fridge - temperature out of range notification
+  mode: single
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.garage_temphum_fridge_temperature
+    above: 4
+    for:
+      minutes: 5
+  - platform: numeric_state
+    entity_id: sensor.garage_temphum_fridge_temperature
+    below: 1
+    for:
+      minutes: 20
+  action:
+  - action: notify.mobile_app_andrej_pixel_9_pro
+    data:
+      title: ⚠️ Fridge Temp Alert
+      message: The fridge is currently at {{ states('sensor.fridge_temperature') }}°C
+        for over 20 minutes.
+      data:
+        ttl: 0
+        priority: high
