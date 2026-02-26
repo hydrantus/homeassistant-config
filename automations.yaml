@@ -618,3 +618,27 @@
       entity_id: light.wc_tradfri_light_group
     data: {}
   mode: single
+- id: '1772056319138'
+  alias: wc - light - full power on long press
+  description: Sets WC lights to 100% on long press
+  triggers:
+  - device_id: 2391a34d81a948d75d17d1ccc2db6554
+    domain: shelly
+    type: long_push
+    subtype: button1
+    trigger: device
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      entity_id: switch.adaptive_lighting_wc
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.wc_tradfri_light_group
+    data:
+      transition: 0.5
+      brightness_pct: 100
+  mode: restart
