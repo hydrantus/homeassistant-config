@@ -481,36 +481,59 @@
       entity_id: light.bathroom_tradfri_light_group
     data: {}
   mode: single
-- id: '1770760597585'
-  alias: living - vacuum - return to dock
-  description: ''
-  triggers:
-  - domain: mqtt
-    device_id: f1211d5965f655047698f7e634425e00
-    type: action
-    subtype: 3_double
-    trigger: device
-  conditions: []
-  actions:
-  - action: vacuum.return_to_base
-    target:
-      entity_id: vacuum.robot_sosak
-    data: {}
-  mode: single
 - id: '1770760676868'
-  alias: living - vacuum - clean kitchen
+  alias: living - vacuum - clean kitchen/dining
+  # 0 living room, 9 office, 4 dining, 5 kitchen, 3 wc, 8 entrance
   description: ''
   triggers:
   - domain: mqtt
     device_id: f1211d5965f655047698f7e634425e00
     type: action
     subtype: 3_single
+    id: kitchen
+    trigger: device
+  - domain: mqtt
+    device_id: f1211d5965f655047698f7e634425e00
+    type: action
+    subtype: 3_double
+    id: kitchen_dining
     trigger: device
   conditions: []
   actions:
-  - action: script.clean_kitchen_floor
-    metadata: {}
-    data: {}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: vacuum.robot_sosak
+        state: cleaning
+      sequence:
+      - action: vacuum.return_to_base
+        target:
+          entity_id: vacuum.robot_sosak
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: kitchen
+      sequence:
+      - action: vacuum.send_command
+        target:
+          entity_id: vacuum.robot_sosak
+        data:
+          command: spot_area
+          params:
+            rooms: "5"
+            cleanings: 1
+    - conditions:
+      - condition: trigger
+        id: kitchen_dining
+      sequence:
+      - action: vacuum.send_command
+        target:
+          entity_id: vacuum.robot_sosak
+        data:
+          command: spot_area
+          params:
+            rooms: "5,4"
+            cleanings: 1
   mode: single
 - id: '1770760700000'
   alias: bathroom - shower light - follow main lights
