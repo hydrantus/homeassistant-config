@@ -644,19 +644,21 @@
   mode: restart
 - id: '1772056319139'
   alias: garage - fridge - temperature out of range notification
-  mode: single
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.garage_temphum_fridge_temperature
+  triggers:
+  - entity_id:
+    - sensor.garage_temphum_fridge_temperature
     above: 4
     for:
-      minutes: 5
-  - platform: numeric_state
-    entity_id: sensor.garage_temphum_fridge_temperature
+      hours: 0
+      minutes: 1
+      seconds: 0
+    trigger: numeric_state
+  - entity_id: sensor.garage_temphum_fridge_temperature
     below: 1
     for:
       minutes: 20
-  action:
+    trigger: numeric_state
+  actions:
   - action: notify.mobile_app_andrej_pixel_9_pro
     data:
       title: ⚠️ Fridge Temp Alert
@@ -665,3 +667,4 @@
       data:
         ttl: 0
         priority: high
+  mode: single

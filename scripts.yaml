@@ -67,6 +67,7 @@ zigbee_sequential_update:
           - delay:
               seconds: 30
 clean_kitchen_floor:
+# 0 living room, 9 office, 4 dining, 5 kitchen, 3 wc, 8 entrance
   sequence:
     - service: vacuum.send_command
       target:
@@ -74,7 +75,7 @@ clean_kitchen_floor:
       data:
         command: spot_area
         params:
-          rooms: "1"
-          count: 1
+          rooms: "5,4" # kitchen and dining
+          cleanings: 1
   alias: vacuum - clean kitchen
   description: ""
