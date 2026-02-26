@@ -571,49 +571,6 @@
     target:
       entity_id: light.office_aurelle_light
   mode: restart
-- id: '1770760900000'
-  alias: laundry - light - toggle on switch
-  description: Smart switch logic with debounce and cool-off
-  mode: restart
-  triggers:
-  - device_id: YOUR_SHELLY_DEVICE_ID
-    domain: shelly
-    type: single_push
-    subtype: button1
-    trigger: device
-  actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: light.laundry_shelly_switch_laundry_lights
-        state: 'off'
-      sequence:
-      - action: light.turn_on
-        target:
-          entity_id: light.laundry_shelly_switch_laundry_lights
-      - action: automation.turn_on
-        target:
-          entity_id: automation.laundry_light_motion_logic
-    - conditions:
-      - condition: state
-        entity_id: light.laundry_shelly_switch_laundry_lights
-        state: 'on'
-      sequence:
-      - if:
-        - condition: template
-          value_template: '{{ (now() - states.light.laundry_shelly_switch_laundry_lights.last_changed).total_seconds()
-            > 2 }}'
-        then:
-        - action: light.turn_off
-          target:
-            entity_id: light.laundry_shelly_switch_laundry_lights
-        - action: automation.turn_off
-          target:
-            entity_id: automation.laundry_light_motion_logic
-        - delay: 00:00:30
-        - action: automation.turn_on
-          target:
-            entity_id: automation.laundry_light_motion_logic
 - id: '1771315791303'
   alias: laundry - light - disable motion logic temporarily after manual switch off
   description: ''
